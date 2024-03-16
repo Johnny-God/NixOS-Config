@@ -42,6 +42,9 @@
 
 ################################################################################################################################################# CUSTOM SYSTEM CONFIGURATION
 
+    # Linux kernel
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Enable Nix Flakes
   nix.extraOptions = ''experimental-features = nix-command flakes'';
 
@@ -65,9 +68,6 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  # Linux kernel
-  boot.kernelPackages = pkgs.linuxPackages_latest;
  
   # Networking   
   networking.hostName = "nixos"; # Define your hostname.
