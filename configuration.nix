@@ -17,6 +17,7 @@
       obsidian
       steam
       discord
+      freecad
     ];
   };
 
