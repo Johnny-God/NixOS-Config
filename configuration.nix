@@ -45,10 +45,7 @@
     # Linux kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # Enable Nix Flakes
-  nix.extraOptions = ''experimental-features = nix-command flakes'';
-
-  # Recognize and Run AppImages
+    # Recognize and Run AppImages
   boot.binfmt.registrations.appimage = {
   wrapInterpreterInShell = false;
   interpreter = "${pkgs.appimage-run}/bin/appimage-run";
@@ -57,6 +54,10 @@
   mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
   magicOrExtension = ''\x7fELF....AI\x02'';
 };
+
+  # Enable Nix Flakes
+  nix.extraOptions = ''experimental-features = nix-command flakes'';
+
 
 ################################################################################################################################################# DEFAULT SYSTEM CONFIGURATION
 
