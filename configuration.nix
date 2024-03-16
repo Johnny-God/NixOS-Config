@@ -16,6 +16,7 @@
       bambu-studio
       obsidian
       steam
+      discord
     ];
   };
 
