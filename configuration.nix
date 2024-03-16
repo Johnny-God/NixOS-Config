@@ -40,8 +40,22 @@
   ### ENABLE SERVICES
   services.ratbagd.enable = true;
 
+################################################################################################################################################# CUSTOM SYSTEM CONFIGURATION
 
-################################################################################################################################################# SYSTEM CONFIGURATION
+  # Enable Nix Flakes
+  nix.extraOptions = ''experimental-features = nix-command flakes'';
+
+  # Recognize and Run AppImages
+  boot.binfmt.registrations.appimage = {
+  wrapInterpreterInShell = false;
+  interpreter = "${pkgs.appimage-run}/bin/appimage-run";
+  recognitionType = "magic";
+  offset = 0;
+  mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
+  magicOrExtension = ''\x7fELF....AI\x02'';
+};
+
+################################################################################################################################################# DEFAULT SYSTEM CONFIGURATION
 
   imports =
     [ # Include the results of the hardware scan.
@@ -100,15 +114,6 @@
     pulse.enable = true;
   };
 
-  # Recognize and Run AppImages
-  boot.binfmt.registrations.appimage = {
-  wrapInterpreterInShell = false;
-  interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-  recognitionType = "magic";
-  offset = 0;
-  mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-  magicOrExtension = ''\x7fELF....AI\x02'';
-};
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
