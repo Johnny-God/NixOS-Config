@@ -18,6 +18,7 @@
       steam
       discord
       freecad
+      bottles
     ];
   };
 
@@ -60,13 +61,13 @@
       # Enable Nix Flakes
   nix.extraOptions = ''experimental-features = nix-command flakes'';
 
-      # NVIDIA Drivers
+      # NVIDIA Drivers and OpenGL
   hardware.nvidia = {
     modesetting.enable = true;  # Required for the driver
     nvidiaSettings = true;      # Enable Nvidia settings GUI tool
     package = config.boot.kernelPackages.nvidiaPackages.stable; # Latest Stable Driver
   };
-
+  hardware.opengl.enable = true;
   services.xserver.videoDrivers = ["nvidia"];  # Tell Xorg to use the Nvidia driver
 
 
