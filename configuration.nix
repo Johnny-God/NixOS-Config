@@ -67,8 +67,14 @@
     nvidiaSettings = true;      # Enable Nvidia settings GUI tool
     package = config.boot.kernelPackages.nvidiaPackages.stable; # Latest Stable Driver
   };
-  hardware.opengl.enable = true;
+
   services.xserver.videoDrivers = ["nvidia"];  # Tell Xorg to use the Nvidia driver
+
+  hardware.opengl = {
+  enable = true;
+  driSupport = true;
+  driSupport32Bit = true;
+};
 
 
 ################################################################################################################################################# DEFAULT SYSTEM CONFIGURATION
