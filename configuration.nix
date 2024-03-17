@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 ################################################################################################################################################# PACKAGES, PROGRAMS, AND SERVICES
 {
@@ -44,7 +44,7 @@
 
 ################################################################################################################################################# CUSTOM SYSTEM CONFIGURATION
 
-    # Linux kernel
+      # Linux kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
       # Recognize and Run AppImages
@@ -57,8 +57,18 @@
   magicOrExtension = ''\x7fELF....AI\x02'';
 };
 
-    # Enable Nix Flakes
+      # Enable Nix Flakes
   nix.extraOptions = ''experimental-features = nix-command flakes'';
+
+      # NVIDIA Drivers
+  hardware.nvidia = {
+    modesetting.enable = true;  # Required for the driver
+    nvidiaSettings = true;      # Enable Nvidia settings GUI tool
+    package = config.boot.kernelPackages.nvidiaPackages.stable; # Latest Stable Driver
+  };
+
+  services.xserver.videoDrivers = ["nvidia"];  # Tell Xorg to use the Nvidia driver
+
 
 ################################################################################################################################################# DEFAULT SYSTEM CONFIGURATION
 
