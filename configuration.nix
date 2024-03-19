@@ -34,6 +34,8 @@
     git
     appimagekit
     appimage-run
+    wine
+    lutris
   ];
 
   ### ENABLE PROGRAMS
@@ -45,10 +47,10 @@
 
 ################################################################################################################################################# CUSTOM SYSTEM CONFIGURATION
 
-      # Linux kernel
+  # Linux kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-      # Recognize and Run AppImages
+  # Recognize & Run AppImages
   boot.binfmt.registrations.appimage = {
   wrapInterpreterInShell = false;
   interpreter = "${pkgs.appimage-run}/bin/appimage-run";
@@ -58,24 +60,22 @@
   magicOrExtension = ''\x7fELF....AI\x02'';
 };
 
-      # Enable Nix Flakes
+  # Enable Nix Flakes
   nix.extraOptions = ''experimental-features = nix-command flakes'';
 
-      # NVIDIA Drivers and OpenGL
-  hardware.nvidia = {
-    modesetting.enable = true;  # Required for the driver
-    nvidiaSettings = true;      # Enable Nvidia settings GUI tool
-    package = config.boot.kernelPackages.nvidiaPackages.stable; # Latest Stable Driver
-  };
+  # Nvidia Drivers
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 
-  services.xserver.videoDrivers = ["nvidia"];  # Tell Xorg to use the Nvidia driver
-
+  # OpenGL & Vulkan support
   hardware.opengl = {
   enable = true;
   driSupport = true;
   driSupport32Bit = true;
+  extraPackages = with pkgs; [
+    vulkan-loader  # May include more Vulkan-related packages
+  ];
 };
-
 
 ################################################################################################################################################# DEFAULT SYSTEM CONFIGURATION
 
@@ -110,7 +110,7 @@
   };
 
  
-  # X11 Services (Windowing System, Keyboard Layout, and KDE Plasma)
+  # X11 Services (Windowing System, Keyboard Layout, & KDE Plasma)
   services.xserver = {
     enable = true;
     xkb.layout = "us";
@@ -134,8 +134,8 @@
   };
 
   # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # settings for stateful data, like file locations & database versions
+  # on your system were taken. It‘s perfectly fine & recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
