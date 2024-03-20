@@ -40,8 +40,6 @@
       obsidian
       steam
       discord
-      freecad
-      bottles
       gitkraken
 
       # CUSTOM COMMANDS
@@ -81,7 +79,6 @@
     appimagekit
     appimage-run
     wine
-    lutris
     vulkan-loader
     clinfo
     glxinfo
