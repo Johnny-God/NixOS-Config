@@ -1,6 +1,6 @@
 ########################################################################### USEFUL THINGS
   # GENERATIONS
-  # Latest Known Good :36
+  # Latest Known Good :41
   # Known Bad: 31, 32, 33, 34, 35
 
   # COMMANDS
@@ -43,6 +43,7 @@
       freecad
       bottles
       git-credential-manager
+      gitkraken
 
       # CUSTOM COMMANDS
       (writeShellScriptBin "1" ''
