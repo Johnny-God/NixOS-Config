@@ -1,10 +1,30 @@
+########################################################################### USEFUL THINGS
+  # GENERATIONS
+  # Latest Known Good :35
+  # Known Bad: 31, 32, 33, 34, 35
+
+  # COMMANDS
+  # Check Nvidia Driver Version
+  #   nvidia-smi
+
+  # Check NixOS Running Generations
+  #   sudo nix-env --list-generations --profile /nix/var/nix/profiles/system :System Generation
+  #   nix-env --list-generations :User Generation
+
+
+
+  # FORMATTING
+  # Page Divider
+  ###########################################################################
+
+
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, lib, ... }:
 
-################################################################################################################################################# PACKAGES, PROGRAMS, AND SERVICES
+########################################################################### PACKAGES, PROGRAMS, AND SERVICES
 {
     ### USER CONFIG
     users.users.ben = {
@@ -19,6 +39,18 @@
       discord
       freecad
       bottles
+
+      # CUSTOM COMMANDS
+      (writeShellScriptBin "1" ''
+        #! ${pkgs.runtimeShell}
+        echo "SUDO NIXOS-REBUILD SWITCH"
+        sudo nixos-rebuild switch
+      '')
+      (writeShellScriptBin "2" ''
+        #! ${pkgs.runtimeShell}
+        echo "SUDO NIXOS-REBUILD BUILD"
+        sudo nixos-rebuild build
+      '')
     ];
   };
 
@@ -40,15 +72,14 @@
 
   ### ENABLE PROGRAMS
   programs.steam.enable = true;
-  #programs.bambu-studio.enable = true;
 
   ### ENABLE SERVICES
   services.ratbagd.enable = true;
 
-################################################################################################################################################# CUSTOM SYSTEM CONFIGURATION
+########################################################################### CUSTOM SYSTEM CONFIGURATION
 
   # Linux kernel
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_6_7;
 
   # Recognize & Run AppImages
   boot.binfmt.registrations.appimage = {
@@ -60,24 +91,7 @@
   magicOrExtension = ''\x7fELF....AI\x02'';
 };
 
-  # Enable Nix Flakes
-  nix.extraOptions = ''experimental-features = nix-command flakes'';
-
-  # Nvidia Drivers
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
-
-  # OpenGL & Vulkan support
-  hardware.opengl = {
-  enable = true;
-  driSupport = true;
-  driSupport32Bit = true;
-  extraPackages = with pkgs; [
-    vulkan-loader  # May include more Vulkan-related packages
-  ];
-};
-
-################################################################################################################################################# DEFAULT SYSTEM CONFIGURATION
+########################################################################### DEFAULT SYSTEM CONFIGURATION
 
   imports =
     [ # Include the results of the hardware scan.
