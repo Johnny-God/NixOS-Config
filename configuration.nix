@@ -29,8 +29,8 @@
 
 ########################################################### PACKAGES, PROGRAMS, AND SERVICES
 {
-    ### USER CONFIG
-    users.users.ben = {
+  ### USER CONFIG
+  users.users.ben = {
     isNormalUser = true;
     description = "Benjamin Wood";
     extraGroups = [ "networkmanager" "wheel" ];
@@ -42,7 +42,6 @@
       discord
       freecad
       bottles
-      git-credential-manager
       gitkraken
 
       # CUSTOM COMMANDS
@@ -57,37 +56,40 @@
         sudo nixos-rebuild build
       '')
       (writeShellScriptBin "3" ''
-      #! ${pkgs.runtimeShell}
-      echo "SUDO REBOOT"
-      read -p "Y/N: " confirm
-      if [[ "$confirm" =~ ^[Yy]$ ]]; then
-        echo "Rebooting"
-        sleep 1
-        sudo reboot
-      elif [[ "$confirm" =~ ^[Nn]$ ]]; then
-        echo "Reboot Aborted"
-      else
-        echo "Invalid input"
-      fi
-    '')
-
+        #! ${pkgs.runtimeShell}
+        echo "SUDO REBOOT"
+        read -p "Reboot? (y/N): " confirm
+        if [[ $confirm =~ ^[Yy]$ ]]; then
+          echo "Rebooting..."
+          wait 0.5
+          sudo reboot
+        else
+          echo "Reboot canceled."
+        fi
+      '')
     ];
   };
 
   # SYSTEM PACKAGES
-  security.polkit.enable = true;
-  nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
     vim
     kdePackages.ktexteditor
     kdePackages.kate
     piper
-     libratbag
+    libratbag
     git
     appimagekit
     appimage-run
     wine
     lutris
+    vulkan-loader
+    clinfo
+    glxinfo
+    vulkan-tools
+    pciutils
+    aha
+    wayland-utils
+    protonup-ng
   ];
 
   ### ENABLE PROGRAMS
@@ -96,20 +98,35 @@
   ### ENABLE SERVICES
   services.ratbagd.enable = true;
 
-################################################################ CUSTOM SYSTEM CONFIGURATION
+  ################################################################ CUSTOM SYSTEM CONFIGURATION
 
-  # Linux kernel
-  boot.kernelPackages = pkgs.linuxPackages_6_7;
+  # Linux kernel and Nvidia driver
+  boot.kernelPackages = pkgs.linuxPackages_zen.extend (self: super: {
+    nvidiaPackages = super.nvidiaPackages // { nvidia = self.nvidiaPackages.production; };
+  });
 
   # Recognize & Run AppImages
   boot.binfmt.registrations.appimage = {
-  wrapInterpreterInShell = false;
-  interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-  recognitionType = "magic";
-  offset = 0;
-  mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-  magicOrExtension = ''\x7fELF....AI\x02'';
-};
+    wrapInterpreterInShell = false;
+    interpreter = "${pkgs.appimage-run}/bin/appimage-run";
+    recognitionType = "magic";
+    offset = 0;
+    mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
+    magicOrExtension = ''\x7fELF....AI\x02'';
+  };
+
+  # Nvidia Driver
+  hardware.nvidia = {
+  modesetting.enable = true;
+  open = false;
+  nvidiaSettings = true;
+  };
+
+  # Enable 32-bit application support (optional but recommended)
+  hardware.opengl.driSupport32Bit = true;
+
+  # Enable Unfree Packages
+  nixpkgs.config.allowUnfree = true;
 
 ################################################################ DEFAULT SYSTEM CONFIGURATION
 
@@ -150,6 +167,7 @@
     xkb.layout = "us";
     xkb.variant = "";
     displayManager.sddm.enable = true;
+    videoDrivers = ["nvidia"];
   };
   services.desktopManager.plasma6.enable = true;
 
