@@ -1,6 +1,6 @@
 ########################################################################### USEFUL THINGS
   # GENERATIONS
-  # Latest Known Good :35
+  # Latest Known Good :36
   # Known Bad: 31, 32, 33, 34, 35
 
   # COMMANDS
@@ -11,11 +11,14 @@
   #   sudo nix-env --list-generations --profile /nix/var/nix/profiles/system :System Generation
   #   nix-env --list-generations :User Generation
 
-
+  # Custom Commands
+  # 1 "sudo nixos-rebuild switch"
+  # 2 "sudo nixos-rebuild build"
+  # 3 "sudo reboot" with confirmation
 
   # FORMATTING
   # Page Divider
-  ###########################################################################
+  ################################################################
 
 
 # Edit this configuration file to define what should be installed on
@@ -24,7 +27,7 @@
 
 { config, pkgs, lib, ... }:
 
-########################################################################### PACKAGES, PROGRAMS, AND SERVICES
+########################################################### PACKAGES, PROGRAMS, AND SERVICES
 {
     ### USER CONFIG
     users.users.ben = {
@@ -39,6 +42,7 @@
       discord
       freecad
       bottles
+      git-credential-manager
 
       # CUSTOM COMMANDS
       (writeShellScriptBin "1" ''
@@ -51,6 +55,21 @@
         echo "SUDO NIXOS-REBUILD BUILD"
         sudo nixos-rebuild build
       '')
+      (writeShellScriptBin "3" ''
+      #! ${pkgs.runtimeShell}
+      echo "SUDO REBOOT"
+      read -p "Y/N: " confirm
+      if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Rebooting"
+        sleep 1
+        sudo reboot
+      elif [[ "$confirm" =~ ^[Nn]$ ]]; then
+        echo "Reboot Aborted"
+      else
+        echo "Invalid input"
+      fi
+    '')
+
     ];
   };
 
@@ -76,7 +95,7 @@
   ### ENABLE SERVICES
   services.ratbagd.enable = true;
 
-########################################################################### CUSTOM SYSTEM CONFIGURATION
+################################################################ CUSTOM SYSTEM CONFIGURATION
 
   # Linux kernel
   boot.kernelPackages = pkgs.linuxPackages_6_7;
@@ -91,7 +110,7 @@
   magicOrExtension = ''\x7fELF....AI\x02'';
 };
 
-########################################################################### DEFAULT SYSTEM CONFIGURATION
+################################################################ DEFAULT SYSTEM CONFIGURATION
 
   imports =
     [ # Include the results of the hardware scan.
@@ -124,14 +143,14 @@
   };
 
  
-  # X11 Services (Windowing System, Keyboard Layout, & KDE Plasma)
+  # X11 Services (Windowing System, Keyboard Layout, KDE Plasma)
   services.xserver = {
     enable = true;
     xkb.layout = "us";
     xkb.variant = "";
     displayManager.sddm.enable = true;
-    desktopManager.plasma6.enable = true;
   };
+  services.desktopManager.plasma6.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
