@@ -120,6 +120,8 @@
   modesetting.enable = true;
   open = false;
   nvidiaSettings = true;
+  powerManagement.enable = false;
+  powerManagement.finegrained = false;
   };
 
   # Enable 32-bit application support (optional but recommended)
